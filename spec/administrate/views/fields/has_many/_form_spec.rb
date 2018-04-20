@@ -1,11 +1,20 @@
 require "rails_helper"
 
 describe "fields/has_many/_form", type: :view do
+
+  before do
+    allow(view).to receive(:namespace).and_return(:admin)
+    allow(view).to receive(:url_for).and_return('/fakeurl')
+  end
+
+
   describe "the field label" do
     it "displays the association name" do
       has_many = double(
         attribute_key: :associated_object_ids,
         attribute: :associated_objects,
+        load_with_ajax?: false,
+        associated_class: nil
       )
 
       render(

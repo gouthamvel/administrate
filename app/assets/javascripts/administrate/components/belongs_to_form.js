@@ -1,5 +1,5 @@
 $(function() {
-  $(".field-unit--has-many select[data-remote-url]").each(function(index, field) {
+  $(".field-unit--belongs-to select[data-remote-url]").each(function(index, field) {
     $(field).selectize({
       valueField: 'id',
       labelField: 'name',
