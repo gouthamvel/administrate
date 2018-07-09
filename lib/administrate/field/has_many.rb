@@ -6,6 +6,7 @@ module Administrate
   module Field
     class HasMany < Associative
       DEFAULT_LIMIT = 5
+      DEFAULT_ASSOCIATED_LIMIT = 20
 
       def self.permitted_attribute(attr, _options = nil)
         { "#{attr.to_s.singularize}_ids".to_sym => [] }
@@ -22,6 +23,17 @@ module Administrate
       def associated_resource_options
         candidate_resources.map do |resource|
           [display_candidate_resource(resource), resource.send(primary_key)]
+        end
+      end
+
+      def ajax_resource_options
+        if selected_options.nil?
+          []
+        else
+          resources = candidate_resources.find(selected_options)
+          resources.map do |resource|
+            [display_candidate_resource(resource), resource.send(primary_key)]
+          end
         end
       end
 
@@ -61,6 +73,10 @@ module Administrate
 
       def order
         @order ||= Administrate::Order.new(sort_by, direction)
+      end
+
+      def load_with_ajax?
+        associated_class.count > DEFAULT_ASSOCIATED_LIMIT
       end
 
       private

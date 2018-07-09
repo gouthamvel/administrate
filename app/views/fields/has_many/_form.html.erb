@@ -23,7 +23,19 @@ and is augmented with [Selectize].
   <%= f.label field.attribute_key, field.attribute %>
 </div>
 <div class="field-unit__field">
-  <%= f.select(field.attribute_key, nil, {}, multiple: true) do %>
-    <%= options_for_select(field.associated_resource_options, field.selected_options) %>
+  <% if field.load_with_ajax? %>
+    <%= f.select(field.attribute_key,
+                nil,
+                {},
+                { data: { "remote-url": url_for([namespace, field.associated_class, format: :json]) },
+                  multiple: true,
+              	  placeholder: "Type to search"}) do %>
+      <%= options_for_select(field.ajax_resource_options, field.selected_options) %>
+    <% end %>
+
+  <% else %>
+    <%= f.select(field.attribute_key, nil, {}, multiple: true) do %>
+      <%= options_for_select(field.associated_resource_options, field.selected_options) %>
+    <% end %>
   <% end %>
 </div>
