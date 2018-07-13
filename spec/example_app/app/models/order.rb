@@ -1,5 +1,6 @@
 class Order < ActiveRecord::Base
   belongs_to :customer
+  belongs_to :seller, class_name: 'Customer', optional: true
 
   validates :customer, presence: true
   has_many :line_items, dependent: :destroy

@@ -16,16 +16,24 @@ describe Admin::OrdersController, type: :controller do
 
     before(:each) do
       # Create a few orders for the user and a few for other customers
-      create_list :order, 4, customer: create(:customer)
-      create_list :order, 7, customer: user
-      create_list :order, 2, customer: create(:customer)
-      create_list :order, 2, customer: user
+      create_list :order, 4, customer: create(:customer), seller: user
+      create_list :order, 7, customer: user, seller: user
+      create_list :order, 2, customer: create(:customer), seller: user
+      create_list :order, 2, customer: user, seller: user
     end
 
     # Policies are defined in order_policy.rb
     describe "GET index" do
       it "shows only the records in the admin scope" do
         locals = capture_view_locals { get :index }
+        expect(locals[:resources].count).to eq(9) # only my orders
+      end
+
+      it "searches customer's name when 'search' param is found" do
+        locals = capture_view_locals { get :index, search: 'Customer'}
+        locals[:resources].each do |order|
+          expect(order.customer.name).to match(/.*Customer.*/)
+        end
         expect(locals[:resources].count).to eq(9) # only my orders
       end
     end
